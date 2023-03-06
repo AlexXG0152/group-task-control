@@ -13,9 +13,9 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 
-import { UpdateUserPasswordDto } from 'src/user/dto/updateUser.dto';
 import { OrganizationService } from './organization.service';
 import { Public } from 'src/auth/common/decorators';
+import { CreateOrganizationDto } from './dto/createOrganization.dto';
 
 @Controller('organization')
 export class OrganizationController {
@@ -49,7 +49,7 @@ export class OrganizationController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async createOrganization(
-    @Body() data: any,
+    @Body() data: CreateOrganizationDto,
     @Req() req: Request,
     @Res() res: Response,
   ) {
@@ -64,7 +64,7 @@ export class OrganizationController {
   @Put(':id')
   async updateOrganization(
     @Param('id') id: string,
-    @Body() data: UpdateUserPasswordDto,
+    @Body() data: any,
     @Req() req: Request,
     @Res() res: Response,
   ) {

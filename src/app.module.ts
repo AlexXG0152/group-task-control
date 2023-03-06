@@ -16,7 +16,11 @@ import { OrganizationModule } from './organization/organization.module';
     UserModule,
     TaskModule,
     ConfigModule.forRoot(),
-    MongooseModule.forRoot(process.env.MONGO_URL),
+    MongooseModule.forRootAsync({
+      useFactory: () => ({
+        uri: process.env.MONGO_URL,
+      }),
+    }),
     OrganizationModule,
   ],
   controllers: [AppController],

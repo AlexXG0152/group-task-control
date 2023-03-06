@@ -5,20 +5,19 @@ import {
   Injectable,
   forwardRef,
 } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
+
 import { AuthService } from 'src/auth/auth.service';
-import { checkUUID } from 'src/common/checkUUID';
 import { UpdateUserPasswordDto } from './dto/updateUser.dto';
 import { CreateUserDto } from './dto/createUser.dto';
 import { User, UserDocument } from './schemas/user.schema';
-import { InjectConnection, InjectModel } from '@nestjs/mongoose';
-import { Connection, Model } from 'mongoose';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectModel(User.name) private userModel: Model<UserDocument>,
-    // @InjectConnection() private connection: Connection,
     @Inject(forwardRef(() => AuthService))
     private authService: AuthService,
   ) {}
@@ -28,7 +27,6 @@ export class UserService {
   }
 
   async getUser(id: string) {
-    await checkUUID(id);
     try {
       const user = await this.userModel.findById(id).exec();
       delete user.password;
@@ -63,35 +61,34 @@ export class UserService {
   }
 
   async updateUser(id: string, data: UpdateUserPasswordDto): Promise<any> {
-    await checkUUID(id);
+    const oldData = await this.getUser(id);
 
-    const oldData = (await this.getUser(id)).password;
-
-    const isPasswordMatch = await bcrypt.compare(data.newPassword, oldData);
+    const isPasswordMatch = await bcrypt.compare(
+      data.password,
+      oldData.password,
+    );
 
     if (isPasswordMatch) {
       throw new HttpException('FORBIDDEN', HttpStatus.FORBIDDEN);
     }
 
     const hashedNewPassword = await this.authService.hashPassword(
-      data.newPassword,
+      data.password,
     );
 
     try {
-      const user = await this.userModel.updateOne({
-        id: { id },
-        data: {
-          password: hashedNewPassword,
-        },
-      });
-      // delete user.password;
+      const user = await this.userModel.findOneAndUpdate(
+        { _id: id },
+        { password: hashedNewPassword },
+        { new: true },
+      );
+      delete user.password;
+
       return user;
     } catch (error) {}
   }
 
   async deleteUser(id: string): Promise<any> {
-    await checkUUID(id);
-    // await cheskIsExists(id, this.prisma.user);
     try {
       return await this.userModel.deleteOne({ id });
     } catch (error) {}
