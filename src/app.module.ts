@@ -7,9 +7,18 @@ import { TaskModule } from './task/task.module';
 import { APP_GUARD } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
 import { AtGuard } from './auth/common/guards';
+import { MongooseModule } from '@nestjs/mongoose';
+import { OrganizationModule } from './organization/organization.module';
 
 @Module({
-  imports: [AuthModule, UserModule, TaskModule, ConfigModule.forRoot()],
+  imports: [
+    AuthModule,
+    UserModule,
+    TaskModule,
+    ConfigModule.forRoot(),
+    MongooseModule.forRoot(process.env.MONGO_URL),
+    OrganizationModule,
+  ],
   controllers: [AppController],
   providers: [
     AppService,

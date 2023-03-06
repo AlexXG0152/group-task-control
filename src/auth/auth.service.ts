@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   Inject,
   Injectable,
@@ -7,14 +8,18 @@ import {
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { AuthDTO } from './dto/auth.dto';
-import { PrismaService } from 'src/prisma/prisma.service';
+// import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
 import { CreateUserDto } from 'src/user/dto/createUser.dto';
+import { User, UserDocument } from 'src/user/schemas/user.schema';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private prisma: PrismaService,
+    // private prisma: PrismaService,
+    @InjectModel(User.name) private userModel: Model<UserDocument>,
     @Inject(forwardRef(() => UserService))
     private userService: UserService,
     @Inject(forwardRef(() => JwtService))
@@ -24,11 +29,11 @@ export class AuthService {
   async signUp(data: AuthDTO) {
     const { login, password } = data;
 
-    const user = await this.prisma.user.findFirst({ where: { login: login } });
+    const user = await this.userModel.findOne({ login: login });
 
-    // if (user) {
-    //   throw new BadRequestException('User already exists!');
-    // }
+    if (user) {
+      throw new BadRequestException('User already exists!');
+    }
 
     try {
       const createdUser = await this.userService.createUser(
@@ -54,7 +59,7 @@ export class AuthService {
   async login(data: AuthDTO) {
     const { login, password } = data;
 
-    const user = await this.prisma.user.findFirst({ where: { login: login } });
+    const user = await this.userModel.findOne({ login: login });
 
     if (!user) {
       throw new ForbiddenException('Access Denied1');
@@ -81,7 +86,7 @@ export class AuthService {
   }
 
   async signOut(id: string) {
-    await this.prisma.user.updateMany({
+    await this.userModel.updateMany({
       where: {
         id,
         hashedRt: {
@@ -95,16 +100,16 @@ export class AuthService {
   }
 
   async refresh(id: string, rfToken: string) {
-    const user = await this.prisma.user.findUnique({ where: { id } });
+    const user = await this.userModel.findById({ id });
     if (!user) {
       throw new ForbiddenException('Access Denied');
     }
 
-    const isRefreshTokenMatch = await bcrypt.compare(rfToken, user.hashedRt);
+    // const isRefreshTokenMatch = await bcrypt.compare(rfToken, user.hashedRt);
 
-    if (!isRefreshTokenMatch) {
-      throw new ForbiddenException('Access Denied');
-    }
+    // if (!isRefreshTokenMatch) {
+    //   throw new ForbiddenException('Access Denied');
+    // }
 
     const [accessToken, refreshToken] = await this.generateTokens(user);
 
@@ -148,8 +153,8 @@ export class AuthService {
 
   async updateRefreshToken(id: string, refreshToken: string) {
     const hash = await this.hashPassword(refreshToken);
-    await this.prisma.user.update({
-      where: { id },
+    await this.userModel.updateOne({
+      id: id,
       data: { hashedRt: hash },
     });
   }
