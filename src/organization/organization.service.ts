@@ -7,7 +7,7 @@ import {
   OrganizationDocument,
 } from './schemas/organization.schema';
 import { CreateOrganizationDto } from './dto/createOrganization.dto';
-import { IOrganization } from './organization.interface';
+import { IOrganization } from './interface/organization.interface';
 
 @Injectable()
 export class OrganizationService {
@@ -32,12 +32,7 @@ export class OrganizationService {
     data: CreateOrganizationDto,
   ): Promise<IOrganization> {
     try {
-      const organization = await this.organizationModel.create({
-        shortName: data.shortName,
-        longName: data.longName,
-      });
-
-      return organization;
+      return new this.organizationModel(data).save();
     } catch (error) {
       console.log(error);
     }
@@ -57,7 +52,7 @@ export class OrganizationService {
 
   async deleteOrganization(id: string): Promise<any> {
     try {
-      return await this.organizationModel.deleteOne({ id });
+      return await this.organizationModel.deleteOne({ _id: id });
     } catch (error) {}
   }
 }

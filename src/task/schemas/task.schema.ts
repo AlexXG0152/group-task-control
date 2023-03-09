@@ -2,7 +2,7 @@ import * as mongoose from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { User } from '../../user/schemas/user.schema';
 import { Organization } from '../../organization/schemas/organization.schema';
-import { IStep } from 'src/task/step.interfase';
+import { IStep } from 'src/task/interface/step.interface';
 
 export type TaskDocument = mongoose.HydratedDocument<Task>;
 
@@ -27,7 +27,7 @@ export class Task {
   realFinishDate: Date;
 
   @Prop({ required: true })
-  step: IStep[];
+  steps: IStep[];
 }
 
 export const TaskSchema = SchemaFactory.createForClass(Task);

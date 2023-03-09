@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   HttpException,
   HttpStatus,
   Inject,
@@ -29,7 +30,7 @@ export class UserService {
   async getUser(id: string) {
     try {
       const user = await this.userModel.findById(id).exec();
-      delete user.password;
+      user.password = '';
       return user;
     } catch (error) {
       throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
@@ -37,22 +38,20 @@ export class UserService {
   }
 
   async createUser(data: CreateUserDto) {
+    const checkUserExists = await this.userModel
+      .findOne({ login: data.login })
+      .exec();
+
+    if (checkUserExists) {
+      throw new BadRequestException('User already exists!');
+    }
+
     try {
       const hashedPassword = await this.authService.hashPassword(data.password);
       data['password'] = hashedPassword;
 
-      const user = await this.userModel.create({
-        login: data.login,
-        password: hashedPassword,
-        firstname: data.firstname,
-        lastname: data.lastname,
-        employmentDate: data.employmentDate,
-        firedDate: data?.firedDate,
-        role: data.role,
-        organizationID: data.organizationID,
-      });
-
-      delete user.password;
+      const user = await new this.userModel(data).save();
+      user.password = '';
 
       return user;
     } catch (error) {
@@ -90,7 +89,7 @@ export class UserService {
 
   async deleteUser(id: string): Promise<any> {
     try {
-      return await this.userModel.deleteOne({ id });
+      return await this.userModel.deleteOne({ _id: id });
     } catch (error) {}
   }
 }
