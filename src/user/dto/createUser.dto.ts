@@ -1,6 +1,6 @@
 import { IsDate, IsNotEmpty, IsString } from 'class-validator';
 import { Organization } from 'src/organization/schemas/organization.schema';
-import { IUser } from '../interface/user.interface';
+import { IUser, UserRole } from '../interface/user.interface';
 
 export class CreateUserDto implements IUser {
   @IsNotEmpty()
@@ -20,7 +20,7 @@ export class CreateUserDto implements IUser {
 
   @IsNotEmpty()
   @IsString()
-  role: string;
+  role: UserRole;
 
   @IsNotEmpty()
   @IsString()

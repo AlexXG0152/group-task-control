@@ -11,17 +11,22 @@ import {
   Put,
   Req,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 
 import { UserService } from './user.service';
 import { UpdateUserPasswordDto, UpdateUserDto } from './dto/updateUser.dto';
 import { CreateUserDto } from './dto/createUser.dto';
+import { hasRoles } from 'src/auth/common/decorators';
+import { RolesGuard } from 'src/auth/common/guards';
 
 @Controller('user')
 export class UserController {
   constructor(private userService: UserService) {}
 
+  @hasRoles('user')
+  @UseGuards(RolesGuard)
   @Get('/')
   async getUsers(@Req() req: Request, @Res() res: Response) {
     try {

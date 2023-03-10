@@ -1,5 +1,6 @@
 import { IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator';
 import { Organization } from 'src/organization/schemas/organization.schema';
+import { UserRole } from '../interface/user.interface';
 
 export interface IUpdateUserPasswordDto {
   password: string;
@@ -46,7 +47,7 @@ export class UpdateUserDto implements IUpdateUserDto {
   @IsString()
   @IsOptional()
   @IsNotEmpty()
-  role?: string;
+  role?: UserRole;
   @IsString()
   @IsOptional()
   @IsNotEmpty()

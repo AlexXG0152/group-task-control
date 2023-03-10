@@ -10,6 +10,12 @@ export interface IUser {
   employmentDate: Date;
   firedDate?: Date;
 
-  role: string;
+  role: UserRole;
   organizationID: Organization;
+}
+
+export enum UserRole {
+  ADMIN = 'admin',
+  MANAGER = 'manager',
+  USER = 'user',
 }
