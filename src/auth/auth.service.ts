@@ -7,23 +7,22 @@ import {
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { Model } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
+
 import { AuthDTO } from './dto/auth.dto';
-// import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
 import { CreateUserDto } from 'src/user/dto/createUser.dto';
 import { User, UserDocument } from 'src/user/schemas/user.schema';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
 
 @Injectable()
 export class AuthService {
   constructor(
-    // private prisma: PrismaService,
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     @Inject(forwardRef(() => UserService))
     private userService: UserService,
     @Inject(forwardRef(() => JwtService))
-    private jwt: JwtService,
+    private readonly jwt: JwtService,
   ) {}
 
   async signUp(data: AuthDTO) {

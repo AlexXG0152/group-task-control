@@ -8,12 +8,14 @@ export class Organization {
   @Prop({
     required: true,
     unique: true,
+    trim: true,
   })
   shortName: string;
 
   @Prop({
     required: true,
     unique: true,
+    trim: true,
   })
   longName: string;
 }

@@ -6,6 +6,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  Patch,
   Post,
   Put,
   Req,
@@ -14,7 +15,7 @@ import {
 import { Request, Response } from 'express';
 
 import { UserService } from './user.service';
-import { UpdateUserPasswordDto } from './dto/updateUser.dto';
+import { UpdateUserPasswordDto, UpdateUserDto } from './dto/updateUser.dto';
 import { CreateUserDto } from './dto/createUser.dto';
 
 @Controller('user')
@@ -61,6 +62,20 @@ export class UserController {
   async updateOneUser(
     @Param('id') id: string,
     @Body() data: UpdateUserPasswordDto,
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
+    try {
+      return res.send(await this.userService.updateUserPassword(id, data));
+    } catch (error) {
+      return res.status(error.status).send(error);
+    }
+  }
+
+  @Patch(':id')
+  async updateUser(
+    @Param('id') id: string,
+    @Body() data: UpdateUserDto,
     @Req() req: Request,
     @Res() res: Response,
   ) {

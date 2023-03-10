@@ -21,7 +21,6 @@ import { CreateOrganizationDto } from './dto/createOrganization.dto';
 export class OrganizationController {
   constructor(private organizationService: OrganizationService) {}
 
-  @Public()
   @Get('/')
   async getOrganizations(@Req() req: Request, @Res() res: Response) {
     try {
@@ -31,7 +30,6 @@ export class OrganizationController {
     }
   }
 
-  @Public()
   @Get(':id')
   async getOrganization(
     @Param('id') id: string,
@@ -45,7 +43,6 @@ export class OrganizationController {
     }
   }
 
-  @Public()
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async createOrganization(
@@ -60,7 +57,6 @@ export class OrganizationController {
     }
   }
 
-  @Public()
   @Put(':id')
   async updateOrganization(
     @Param('id') id: string,
@@ -77,7 +73,6 @@ export class OrganizationController {
     }
   }
 
-  @Public()
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteOrganization(

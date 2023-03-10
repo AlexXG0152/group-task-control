@@ -11,7 +11,7 @@ import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 
 import { AuthService } from 'src/auth/auth.service';
-import { UpdateUserPasswordDto } from './dto/updateUser.dto';
+import { UpdateUserDto, UpdateUserPasswordDto } from './dto/updateUser.dto';
 import { CreateUserDto } from './dto/createUser.dto';
 import { User, UserDocument } from './schemas/user.schema';
 
@@ -24,7 +24,11 @@ export class UserService {
   ) {}
 
   async getUsers(): Promise<User[]> {
-    return this.userModel.find().exec();
+    const users = await this.userModel.find().exec();
+    users.map((user) => {
+      user.password = '';
+    });
+    return users;
   }
 
   async getUser(id: string) {
@@ -48,18 +52,21 @@ export class UserService {
 
     try {
       const hashedPassword = await this.authService.hashPassword(data.password);
-      data['password'] = hashedPassword;
+      data.password = hashedPassword;
 
       const user = await new this.userModel(data).save();
       user.password = '';
 
       return user;
     } catch (error) {
-      console.log(error);
+      throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
     }
   }
 
-  async updateUser(id: string, data: UpdateUserPasswordDto): Promise<any> {
+  async updateUserPassword(
+    id: string,
+    data: UpdateUserPasswordDto,
+  ): Promise<any> {
     const oldData = await this.getUser(id);
 
     const isPasswordMatch = await bcrypt.compare(
@@ -84,12 +91,28 @@ export class UserService {
       delete user.password;
 
       return user;
-    } catch (error) {}
+    } catch (error) {
+      throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
+    }
+  }
+
+  async updateUser(id: string, data: UpdateUserDto): Promise<any> {
+    try {
+      return await this.userModel.findOneAndUpdate(
+        { _id: id },
+        { ...data },
+        { new: true },
+      );
+    } catch (error) {
+      throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
+    }
   }
 
   async deleteUser(id: string): Promise<any> {
     try {
       return await this.userModel.deleteOne({ _id: id });
-    } catch (error) {}
+    } catch (error) {
+      throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
+    }
   }
 }

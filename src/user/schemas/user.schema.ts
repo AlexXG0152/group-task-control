@@ -6,16 +6,16 @@ export type UserDocument = mongoose.HydratedDocument<User>;
 
 @Schema()
 export class User {
-  @Prop({ required: true })
+  @Prop({ required: true, trim: true })
   firstname: string;
 
-  @Prop({ required: true })
+  @Prop({ required: true, trim: true })
   lastname: string;
 
-  @Prop({ required: true })
+  @Prop({ required: true, lowercase: true, trim: true })
   email: string;
 
-  @Prop({ required: true })
+  @Prop({ required: true, trim: true })
   password: string;
 
   @Prop({ required: true })
