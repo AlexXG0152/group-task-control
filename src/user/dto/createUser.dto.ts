@@ -28,7 +28,7 @@ export class CreateUserDto implements IUser {
 
   @IsNotEmpty()
   @IsString()
-  login: string;
+  email: string;
 
   @IsNotEmpty()
   @IsString()

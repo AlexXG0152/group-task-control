@@ -39,7 +39,7 @@ export class UserService {
 
   async createUser(data: CreateUserDto) {
     const checkUserExists = await this.userModel
-      .findOne({ login: data.login })
+      .findOne({ email: data.email })
       .exec();
 
     if (checkUserExists) {

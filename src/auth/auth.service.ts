@@ -27,9 +27,9 @@ export class AuthService {
   ) {}
 
   async signUp(data: AuthDTO) {
-    const { login, password } = data;
+    const { email, password } = data;
 
-    const user = await this.userModel.findOne({ login: login });
+    const user = await this.userModel.findOne({ email: email });
 
     if (user) {
       throw new BadRequestException('User already exists!');
@@ -57,9 +57,9 @@ export class AuthService {
   }
 
   async login(data: AuthDTO) {
-    const { login, password } = data;
+    const { email, password } = data;
 
-    const user = await this.userModel.findOne({ login: login });
+    const user = await this.userModel.findOne({ email: email });
 
     if (!user) {
       throw new ForbiddenException('Access Denied1');
@@ -133,7 +133,7 @@ export class AuthService {
     return await bcrypt.compare(args.password, args.hash);
   }
 
-  async generateAccessToken(args: { id: string; login: string }) {
+  async generateAccessToken(args: { id: string; email: string }) {
     const payload = args;
     return await this.jwt.signAsync(payload, {
       secret: process.env.JWT_SECRET_KEY,
@@ -163,7 +163,7 @@ export class AuthService {
     return Promise.all([
       await this.generateAccessToken({
         id: user.id,
-        login: user.login,
+        email: user.email,
       }),
       await this.generateRefreshToken(user.id),
     ]);
