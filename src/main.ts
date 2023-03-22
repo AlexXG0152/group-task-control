@@ -1,11 +1,7 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
+import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  app.useGlobalPipes(new ValidationPipe());
+import { AppModule } from './app/app.module';
 
-  await app.listen(process.env.PORT || 4000);
-}
-bootstrap();
+
+platformBrowserDynamic().bootstrapModule(AppModule)
+  .catch(err => console.error(err));
