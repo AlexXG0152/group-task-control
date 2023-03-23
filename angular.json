@@ -64,6 +64,10 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "front:build",
+            "proxyConfig": "../front/src/proxy.conf.json"
+          },
           "configurations": {
             "production": {
               "browserTarget": "group-task-control-front:build:production"

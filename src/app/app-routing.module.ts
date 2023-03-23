@@ -5,9 +5,17 @@ import { LoginComponent } from './auth/login/login.component';
 import { SignupComponent } from './auth/signup/signup.component';
 
 const routes: Routes = [
-  { path: 'board', component: BoardComponent },
   { path: 'login', component: LoginComponent },
   { path: 'signup', component: SignupComponent },
+  {
+    path: 'tasks',
+    loadChildren: () => import('./task/task.module').then((m) => m.TaskModule),
+  },
+  {
+    path: '',
+    redirectTo: '',
+    pathMatch: 'full',
+  },
 ];
 
 @NgModule({
