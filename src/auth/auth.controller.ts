@@ -12,7 +12,7 @@ import { AuthService } from './auth.service';
 import { AuthDTO } from './dto/auth.dto';
 import { Request, Response } from 'express';
 import { RtGuard } from './common/guards';
-import { Public } from './common/decorators';
+import { GetCurrentUser, GetCurrentUserId, Public } from './common/decorators';
 
 @Controller('auth')
 export class AuthController {
@@ -63,12 +63,14 @@ export class AuthController {
   @UseGuards(RtGuard)
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
-  async refresh(@Req() req: Request, @Res() res: Response) {
+  async refresh(
+    @GetCurrentUserId() id: string,
+    @GetCurrentUser('refreshToken') refreshToken: string,
+    @Req() req: Request,
+    @Res() res: Response,
+  ): Promise<any> {
     try {
-      const user = req.user;
-      return res.send(
-        await this.authService.refresh(user['id'], user['refreshToken']),
-      );
+      return res.send(await this.authService.refresh(id, refreshToken));
     } catch (error) {
       return res.status(error.status).send(error);
     }

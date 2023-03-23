@@ -41,6 +41,16 @@ export class UserService {
     }
   }
 
+  async getUserHashedRt(id: string) {
+    try {
+      const { hashedRt, ...user } = await this.userModel.findById(id).exec();
+      user.password = '';
+      return hashedRt;
+    } catch (error) {
+      throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
+    }
+  }
+
   async createUser(data: CreateUserDto) {
     const checkUserExists = await this.userModel
       .findOne({ email: data.email })
@@ -51,7 +61,7 @@ export class UserService {
     }
 
     try {
-      const hashedPassword = await this.authService.hashPassword(data.password);
+      const hashedPassword = await this.authService.hash(data.password);
       data.password = hashedPassword;
 
       const user = await new this.userModel(data).save();
@@ -78,9 +88,7 @@ export class UserService {
       throw new HttpException('FORBIDDEN', HttpStatus.FORBIDDEN);
     }
 
-    const hashedNewPassword = await this.authService.hashPassword(
-      data.password,
-    );
+    const hashedNewPassword = await this.authService.hash(data.password);
 
     try {
       const user = await this.userModel.findOneAndUpdate(

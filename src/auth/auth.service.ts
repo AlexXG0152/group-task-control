@@ -61,7 +61,7 @@ export class AuthService {
     const user = await this.userModel.findOne({ email: email });
 
     if (!user) {
-      throw new ForbiddenException('Access Denied1');
+      throw new ForbiddenException('Access Denied');
     }
 
     const isPasswordMatch = await this.comparePasswords({
@@ -70,7 +70,7 @@ export class AuthService {
     });
 
     if (!isPasswordMatch) {
-      throw new ForbiddenException('Access Denied2');
+      throw new ForbiddenException('Access Denied');
     }
 
     const [accessToken, refreshToken] = await this.generateTokens(user);
@@ -99,16 +99,16 @@ export class AuthService {
   }
 
   async refresh(id: string, rfToken: string) {
-    const user = await this.userModel.findById({ id });
+    const user = await this.userModel.findById(id).exec();
     if (!user) {
       throw new ForbiddenException('Access Denied');
     }
 
-    // const isRefreshTokenMatch = await bcrypt.compare(rfToken, user.hashedRt);
+    const isRefreshTokenMatch = await bcrypt.compare(rfToken, user.hashedRt);
 
-    // if (!isRefreshTokenMatch) {
-    //   throw new ForbiddenException('Access Denied');
-    // }
+    if (!isRefreshTokenMatch) {
+      throw new ForbiddenException('Access Denied');
+    }
 
     const [accessToken, refreshToken] = await this.generateTokens(user);
 
@@ -118,10 +118,10 @@ export class AuthService {
 
     await this.updateRefreshToken(user.id, refreshToken);
 
-    return { refreshToken };
+    return { accessToken, refreshToken };
   }
 
-  async hashPassword(password: string): Promise<string> {
+  async hash(password: string): Promise<string> {
     return await bcrypt.hash(password, Number(process.env.CRYPT_SALT));
   }
 
@@ -151,11 +151,12 @@ export class AuthService {
   }
 
   async updateRefreshToken(id: string, refreshToken: string) {
-    const hash = await this.hashPassword(refreshToken);
-    await this.userModel.updateOne({
-      id: id,
-      data: { hashedRt: hash },
-    });
+    const hash = await this.hash(refreshToken);
+    await this.userModel.findOneAndUpdate(
+      { _id: id },
+      { hashedRt: hash },
+      { new: true },
+    );
   }
 
   async generateTokens(user) {
