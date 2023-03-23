@@ -12,7 +12,12 @@ export class TaskService {
 
   public getTasks() {
     return this.http
-      .get('http://127.0.0.1:4000/api/task')
+      .get('/api/task')
+      .pipe(catchError(this.handleError));
+  }
+  public getTask(id: string) {
+    return this.http
+      .get(`/api/task/${id}`)
       .pipe(catchError(this.handleError));
   }
 

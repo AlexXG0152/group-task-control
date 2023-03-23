@@ -23,6 +23,7 @@ export class LoginComponent implements OnInit {
       .login(this.loginForm.value)
       .pipe(map((token: string) => this.router.navigate(['/tasks'])))
       .subscribe();
+
   }
 
   ngOnInit(): void {
