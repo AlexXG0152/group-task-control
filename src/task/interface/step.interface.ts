@@ -1,6 +1,6 @@
 export interface IStep {
   stepNumber: number;
-  name: string;
+  name?: string;
   desc?: string;
   done?: boolean;
   doneAt?: Date;

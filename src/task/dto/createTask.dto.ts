@@ -11,6 +11,14 @@ export class CreateTaskDto implements ITask {
   @IsNotEmpty()
   organizationID: Organization[];
 
+  @IsNotEmpty()
+  @IsString()
+  name: string;
+
+  @IsNotEmpty()
+  @IsString()
+  description: string;
+
   @IsString()
   startDate: Date;
 

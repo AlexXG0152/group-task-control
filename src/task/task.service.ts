@@ -29,15 +29,31 @@ export class TaskService {
     }
   }
 
-  async updateTask(id: string, data: UpdateTaskDto): Promise<Task> {
+  async updateTask(
+    id: string,
+    data: any,
+    finishedUserID: string,
+  ): Promise<Task> {
     try {
-      const task = await this.taskModel.findOneAndUpdate(
-        { _id: id },
-        { ...data },
-        { new: true },
+      const originTask = await this.getTask(id);
+      const query = {};
+
+      for (const key in originTask.steps[data.stepNumber - 1]) {
+        // if (
+        //   originTask.steps[data.stepNumber - 1][key] &&
+        //   originTask.steps[data.stepNumber - 1][key] !== data[key]
+        // ) {
+        query[key] = originTask.steps[data.stepNumber - 1][key] || data[key];
+        // }
+      }
+
+      const updatedTask = await this.taskModel.findOneAndUpdate(
+        { _id: id, 'steps.stepNumber': data.stepNumber },
+        { $set: { 'steps.$': { ...query, finishedUserID } } },
+        { upsert: true, useFindAndModify: false },
       );
 
-      return task;
+      return updatedTask;
     } catch (error) {}
   }
 

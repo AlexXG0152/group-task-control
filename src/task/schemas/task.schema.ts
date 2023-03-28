@@ -18,6 +18,12 @@ export class Task {
   organizationID: Organization[];
 
   @Prop({ required: true })
+  name: string;
+
+  @Prop({ required: true })
+  description: string;
+
+  @Prop({ required: true })
   startDate: Date;
 
   @Prop()
