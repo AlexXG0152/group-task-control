@@ -11,13 +11,15 @@ export class TaskService {
   constructor(private http: HttpClient) {}
 
   public getTasks() {
-    return this.http
-      .get('/api/task')
-      .pipe(catchError(this.handleError));
+    return this.http.get('/api/task').pipe(catchError(this.handleError));
   }
   public getTask(id: string) {
+    return this.http.get(`/api/task/${id}`).pipe(catchError(this.handleError));
+  }
+
+  public updateTask(id: string, data: any) {
     return this.http
-      .get(`/api/task/${id}`)
+      .patch(`/api/task/${id}`, data)
       .pipe(catchError(this.handleError));
   }
 

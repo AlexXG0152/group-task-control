@@ -56,7 +56,7 @@ export class SignupComponent implements OnInit {
 
     this.authService
       .signup(this.registerForm.value)
-      .pipe(map((token: string) => this.router.navigate(['/tasks'])))
+      .pipe(map((token: string) => this.router.navigate(['/task'])))
       .subscribe();
   }
 

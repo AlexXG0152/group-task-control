@@ -13,6 +13,7 @@ const routes: Routes = [
     path: 'tasks',
     loadChildren: () => import('./task/task.module').then((m) => m.TaskModule),
     canActivate: [AuthGuard],
+    data: { preload: true },
   },
   {
     path: '',

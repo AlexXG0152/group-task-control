@@ -1,1 +1,121 @@
-<p>{{tasks}}</p>
+<ng-container *ngIf="task; else spinner">
+  <div>
+
+    <div class="container text-start">
+      <div class="row justify-content-start">
+        <div class="col-8">
+
+          <div class="card m-2">
+            <h2 class="card-header">{{(task)?.name}}</h2>
+            <div class="card-body">
+              <div class="container text-start">
+                <div class="row justify-content-start">
+                  <div class="col-3">Starter ID</div>
+                  <div class="col-9">{{(task)?.starterID}}</div>
+                </div>
+                <div class="row justify-content-start">
+                  <div class="col-3">Organization ID</div>
+                  <div class="col-9">{{(task)?.organizationID}}</div>
+                </div>
+                <div class="row justify-content-start">
+                  <div class="col-3">Description</div>
+                  <div class="col-9">{{(task)?.description}}</div>
+                </div>
+                <div class="row justify-content-start">
+                  <div class="col-3">Start Date</div>
+                  <div class="col-9">{{(task)?.startDate | date}}</div>
+                </div>
+                <div class="row justify-content-start">
+                  <div class="col-3">Plan Finish Date</div>
+                  <div class="col-9">{{(task)?.planFinishDate | date}}</div>
+                </div>
+                <div class="row justify-content-start">
+                  <div class="col-3">Real Finish Date</div>
+                  <div class="col-9">{{(task)?.realFinishDate | date}}</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="progress m-2">
+              <div class="progress-bar" role="progressbar" aria-label="Example with label"
+                [ngStyle]="{width: percentage}" aria-valuenow="55" aria-valuemin="0" aria-valuemax="100">{{percentage}}
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div class="col-4">
+          <div class="card border-light m-2">
+            <h4 class="card-header">Actions</h4>
+            <button type="button" class="btn btn-success mb-1">Complete all task steps</button>
+            <button type="button" class="btn btn-danger mb-1">Cancel task</button>
+            <button type="button" class="btn btn-warning">Remind by e-mail</button>
+            <p></p>
+            <p></p>
+            <button type="button" class="btn btn-secondary mb-1" (click)="onBackClick()">Back to task board</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <h3 class="text-center m-2">STEPS</h3>
+
+  <div class="accordion accordion-flush" id="accordionFlushExample">
+    <div class="accordion-item" *ngFor="let step of task.steps">
+      <h2 class="accordion-header" id="flush-headingOne">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+          data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne"
+          [ngStyle]="{'color': (step.done) ? 'green' : 'red'}">
+          {{step.stepNumber}}. {{step.name}}
+        </button>
+      </h2>
+      <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne"
+        data-bs-parent="#accordionFlushExample">
+        <div class="accordion-body">
+          <div class="container text-start">
+            <div class="row justify-content-start" [ngStyle]="{'color': (step.done) ? 'green' : 'red'}">
+              <div class="col-2">Done</div>
+              <div class="col-10">{{step.done}}</div>
+            </div>
+            <div class="row justify-content-start">
+              <div class="col-2">Description</div>
+              <div class="col-10">{{step.desc}}</div>
+            </div>
+            <div class="row justify-content-start">
+              <div class="col-2">Comment</div>
+              <div class="col-10">{{step.comment}}</div>
+            </div>
+            <div class="row justify-content-start">
+              <div class="col-2">Done at</div>
+              <div class="col-10">{{step.doneAt}}</div>
+            </div>
+            <div class="row justify-content-start">
+              <div class="col-2">Finished UserID</div>
+              <div class="col-10">{{step.finishedUserID}}</div>
+            </div>
+            <div class="row justify-content-start mt-2">
+              <div *ngIf="!step.done" class="col-2"><button type="button" class="btn btn-outline-success"
+                  (click)="onFinishStepClick(task._id, step.stepNumber)">Finish
+                  step</button></div>
+              <div *ngIf="step.done" class="col-2"><button type="button" class="btn btn-outline-primary">Edit
+                  info</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</ng-container>
+
+
+<ng-template #spinner>
+  <div class="d-flex justify-content-center mt-5">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+</ng-template>
