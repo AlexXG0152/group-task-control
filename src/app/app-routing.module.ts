@@ -4,10 +4,12 @@ import { LoginComponent } from './auth/login/login.component';
 import { SignupComponent } from './auth/signup/signup.component';
 import { AuthGuard } from './guards/auth.guard';
 import { TaskComponent } from './task/task/task.component';
+import { MonitoringComponent } from './task/monitoring/monitoring.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'signup', component: SignupComponent },
+  { path: 'monitoring', component: MonitoringComponent },
   { path: 'about', component: TaskComponent },
   {
     path: 'tasks',
