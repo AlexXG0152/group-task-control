@@ -20,6 +20,7 @@ export class TaskService {
   public createTask(data: any) {
     return this.http
       .post(`/api/task/`, data)
+      // .post(`/api/task/`, { ...data, selectedOrganizations })
       .pipe(catchError(this.handleError));
   }
 

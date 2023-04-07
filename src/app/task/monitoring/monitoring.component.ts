@@ -16,6 +16,8 @@ export class MonitoringComponent implements OnInit {
   ngOnInit(): void {
     this.taskService.getTasks().subscribe((response) => {
       this.tasks = response;
+      console.log(response);
+
 
       this.tasks.forEach((element: any) => {
         const taskDone = element.steps.reduce(

@@ -41,7 +41,7 @@ export class CreateTaskComponent {
     });
   }
 
-  onCheckboxChange(event: any) {
+  public onCheckboxChange(event: any) {
     const selectedOrganizations = this.organizationsForm.controls[
       'selectedOrganizations'
     ] as FormArray;
@@ -57,32 +57,32 @@ export class CreateTaskComponent {
   }
 
   public addStepFormGroup() {
-    const steps = this.stepForm.get('steps') as FormArray;
-    steps.push(this.createStepFormGroup());
+    const step = this.stepForm.get('steps') as FormArray;
+    step.push(this.createStepFormGroup());
   }
 
   public removeOrClearStep(i: number) {
-    const steps = this.stepForm.get('steps') as FormArray;
-    if (steps.length > 1) {
-      steps.removeAt(i);
+    const step = this.stepForm.get('steps') as FormArray;
+    if (step.length > 1) {
+      step.removeAt(i);
     } else {
-      steps.reset();
+      step.reset();
     }
   }
 
   private createStepFormGroup(): FormGroup {
     return new FormGroup({
       name: new FormControl(''),
-      description: new FormControl(''),
+      desc: new FormControl(''),
     });
   }
 
   private createTaskFormGroup(): FormGroup {
     return new FormGroup({
-      taskName: new FormControl(''),
-      taskDescription: new FormControl(''),
-      taskStartDate: new FormControl(''),
-      taskPlanFinishDate: new FormControl(''),
+      name: new FormControl(''),
+      description: new FormControl(''),
+      startDate: new FormControl(''),
+      planFinishDate: new FormControl(''),
     });
   }
 
@@ -94,19 +94,29 @@ export class CreateTaskComponent {
     return (this.taskForm.get('taskData') as FormArray).controls;
   }
 
-  save() {
+  public save(): any {
     if (
       this.taskForm.valid &&
       this.organizationsForm.valid &&
       this.stepForm.valid
     ) {
+      let i = 1;
+      for (const key in this.stepForm.value.steps) {
+        if (
+          Object.prototype.hasOwnProperty.call(this.stepForm.value.steps, key)
+        ) {
+          this.stepForm.value.steps[key].stepNumber = i;
+          this.stepForm.value.steps[key].done = false;
+          i++;
+        }
+      }
       const formData = {
-        ...this.taskForm.value,
-        ...this.organizationsForm.value,
+        ...this.taskForm.value.taskData[0],
         ...this.stepForm.value,
+        organizationID: this.organizationsForm.value.selectedOrganizations,
       };
-      console.log(formData);
-      this.taskService.createTask(formData);
+
+      return this.taskService.createTask(formData).subscribe();
     } else {
       this.taskForm.markAllAsTouched();
       this.organizationsForm.markAllAsTouched();
