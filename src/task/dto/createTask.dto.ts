@@ -28,5 +28,5 @@ export class CreateTaskDto implements ITask {
   @IsString()
   realFinishDate?: Date;
 
-  step?: IStep[];
+  steps?: IStep[];
 }

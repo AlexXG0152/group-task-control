@@ -9,7 +9,7 @@ export class UpdateTaskDto implements Omit<ITask, 'starterID'> {
   startDate: Date;
   planFinishDate?: Date;
   realFinishDate?: Date;
-  step?: IStep[];
+  steps?: IStep[];
 }
 
 export class UpdateStepDto implements IStep {

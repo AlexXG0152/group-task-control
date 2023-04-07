@@ -48,12 +48,13 @@ export class TaskController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async createOneTask(
-    @Body() task: CreateTaskDto,
+    @GetCurrentUserId() user: string,
+    @Body() task: any,
     @Req() req: Request,
     @Res() res: Response,
   ) {
     try {
-      return res.send(await this.taskService.createTask(task));
+      return res.send(await this.taskService.createTask(task, user));
     } catch (error) {
       return res.status(error.status).send(error);
     }

@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 import { Task, TaskDocument } from './schemas/task.schema';
 import { CreateTaskDto } from './dto/createTask.dto';
 import { UpdateTaskDto } from './dto/updateTask.dto';
+import { log } from 'console';
 
 @Injectable()
 export class TaskService {
@@ -21,9 +22,16 @@ export class TaskService {
     }
   }
 
-  async createTask(data: CreateTaskDto): Promise<Task> {
+  async createTask(data: any, user: string) {
+    const task = { starterID: user, ...data, performers: [] };
+
+    data.organizationID.forEach((organization: any) => {
+      task.performers.push({ organization, steps: [...data.steps] });
+    });
+
+    console.log(task);
     try {
-      return new this.taskModel(data).save();
+      return new this.taskModel({ starterID: user, ...task }).save();
     } catch (error) {
       console.log(error);
     }
@@ -48,8 +56,8 @@ export class TaskService {
       }
 
       const updatedTask = await this.taskModel.findOneAndUpdate(
-        { _id: id, 'steps.stepNumber': data.stepNumber },
-        { $set: { 'steps.$': { ...query, finishedUserID } } },
+        { _id: id, 'step.stepNumber': data.stepNumber },
+        { $set: { 'step.$': { ...query, finishedUserID } } },
         { upsert: true, useFindAndModify: false },
       );
 

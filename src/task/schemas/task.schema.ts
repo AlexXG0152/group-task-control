@@ -3,6 +3,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { User } from '../../user/schemas/user.schema';
 import { Organization } from '../../organization/schemas/organization.schema';
 import { IStep } from 'src/task/interface/step.interface';
+import { IPerformers } from '../interface/performers.interface';
 
 export type TaskDocument = mongoose.HydratedDocument<Task>;
 
@@ -34,6 +35,9 @@ export class Task {
 
   @Prop({ required: true })
   steps: IStep[];
+
+  @Prop()
+  performers: IPerformers[];
 }
 
 export const TaskSchema = SchemaFactory.createForClass(Task);
