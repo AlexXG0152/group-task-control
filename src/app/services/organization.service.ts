@@ -1,31 +1,16 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-
-import { Observable, throwError } from 'rxjs';
-import { catchError, retry } from 'rxjs/operators';
+import { catchError, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
-export class TaskService {
+export class OrganizationService {
   constructor(private http: HttpClient) {}
 
-  public getTasks() {
-    return this.http.get('/api/task').pipe(catchError(this.handleError));
-  }
-  public getTask(id: string) {
-    return this.http.get(`/api/task/${id}`).pipe(catchError(this.handleError));
-  }
-
-  public createTask(data: any) {
+  public getOrganizations() {
     return this.http
-      .post(`/api/task/`, data)
-      .pipe(catchError(this.handleError));
-  }
-
-  public updateTask(id: string, data: any) {
-    return this.http
-      .patch(`/api/task/${id}`, data)
+      .get('/api/organization')
       .pipe(catchError(this.handleError));
   }
 

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, QueryList, ViewChildren } from '@angular/core';
 import {
   FormArray,
   Validators,
@@ -6,6 +6,8 @@ import {
   FormGroup,
   FormControl,
 } from '@angular/forms';
+import { OrganizationService } from 'src/app/services/organization.service';
+import { TaskService } from 'src/app/services/task.service';
 
 @Component({
   selector: 'app-create-task',
@@ -15,16 +17,43 @@ import {
 export class CreateTaskComponent {
   public taskForm!: FormGroup;
   public stepForm!: FormGroup;
-  constructor(private formBuilder: FormBuilder) {}
+  public organizationsForm!: FormGroup;
+  public organizationsList$: any;
+
+  constructor(
+    private formBuilder: FormBuilder,
+    private organizationService: OrganizationService,
+    private taskService: TaskService
+  ) {}
 
   ngOnInit() {
+    this.organizationsList$ = this.organizationService.getOrganizations();
+    this.organizationsForm = this.formBuilder.group({
+      selectedOrganizations: new FormArray([]),
+    });
+
     this.taskForm = this.formBuilder.group({
-      data: this.formBuilder.array([this.createTaskFormGroup()]),
+      taskData: this.formBuilder.array([this.createTaskFormGroup()]),
     });
 
     this.stepForm = this.formBuilder.group({
       steps: this.formBuilder.array([this.createStepFormGroup()]),
     });
+  }
+
+  onCheckboxChange(event: any) {
+    const selectedOrganizations = this.organizationsForm.controls[
+      'selectedOrganizations'
+    ] as FormArray;
+    if (event.target.checked) {
+      selectedOrganizations.push(new FormControl(event.target.value));
+    } else {
+      const index = selectedOrganizations.controls.findIndex(
+        (x) => x.value === event.target.value
+      );
+      selectedOrganizations.removeAt(index);
+    }
+    // https://edupala.com/how-to-implement-angular-checkbox-input/
   }
 
   public addStepFormGroup() {
@@ -52,7 +81,6 @@ export class CreateTaskComponent {
     return new FormGroup({
       taskName: new FormControl(''),
       taskDescription: new FormControl(''),
-      taskOrganizations: new FormControl(''),
       taskStartDate: new FormControl(''),
       taskPlanFinishDate: new FormControl(''),
     });
@@ -63,65 +91,26 @@ export class CreateTaskComponent {
   }
 
   get aliasesTaskArrayControl() {
-    return (this.taskForm.get('data') as FormArray).controls;
+    return (this.taskForm.get('taskData') as FormArray).controls;
   }
 
   save() {
-    if (this.taskForm.valid && this.stepForm.valid) {
-      console.log(this.taskForm.value);
-      console.log(this.stepForm.value);
+    if (
+      this.taskForm.valid &&
+      this.organizationsForm.valid &&
+      this.stepForm.valid
+    ) {
+      const formData = {
+        ...this.taskForm.value,
+        ...this.organizationsForm.value,
+        ...this.stepForm.value,
+      };
+      console.log(formData);
+      this.taskService.createTask(formData);
     } else {
       this.taskForm.markAllAsTouched();
+      this.organizationsForm.markAllAsTouched();
       this.stepForm.markAllAsTouched();
     }
   }
-
-  // form = this.fb.group({
-  //   // ... other form controls ...
-  //   lessons: this.fb.array([]),
-  // });
-
-  // constructor(private fb: FormBuilder) {}
-
-  // get lessons() {
-  //   return (this.form.controls['lessons'] as FormArray).controls as FormGroup[];
-  // }
-
-  // addLesson() {
-  //   const lessonForm = this.fb.group({
-  //     title: ['', Validators.required],
-  //     level: ['beginner', Validators.required],
-  //   });
-  //   this.lessons.push(lessonForm);
-  // }
-
-  // // deleteLesson(lessonIndex: number) {
-  // //   this.lessons.removeAt(lessonIndex);
-  // // }
-
-  // formArray=new FormArray([]);
-
-  // getFormGroup(data: any) {
-  //   data = data || ({} as any);
-  //   return new FormGroup({
-  //     id: new FormControl(data.id),
-  //     name: new FormControl(data.name, Validators.required),
-  //     fromDate: new FormControl(data.fromDate),
-  //     fromTime: new FormControl(data.fromTime),
-  //     toDate: new FormControl(data.toDate),
-  //     toTime: new FormControl(data.toTime),
-  //     selectedSupervisor2: new FormControl(data.selectedSupervisor2),
-  //     selectedLeave2: new FormControl(data.selectedLeave2)
-  //   }) as unknown as FormArray;
-  // }
-  // save(formArray:FormArray)
-  // {
-  //   if (formArray.valid)
-  //   {
-  //     console.log(formArray.value)
-  //   }
-  //   else
-  //     formArray.markAllAsTouched();
-
-  // }
 }

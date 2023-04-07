@@ -2,21 +2,23 @@
   <div class="row d-flex justify-content-center align-items-center h-100">
     <div class="col-12 col-md-8 col-lg-6 col-xl-5">
       <form [formGroup]="taskForm">
-        <ng-container formArrayName="data">
+        <ng-container formArrayName="taskData">
           <div class="row" *ngFor="let task of aliasesTaskArrayControl; let j = index">
             <ng-container [formGroupName]="j">
 
-              <div class="input-group  mb-3">
+              <div class="input-group mb-3">
                 <span class="input-group-text">Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                <input formControlName="taskName" type="text" class="form-control" aria-describedby="nameHelp">
+                <textarea formControlName="taskName" type="text" class="form-control" aria-describedby="nameHelp"
+                  rows="2"></textarea>
               </div>
 
               <div class="input-group mb-3">
                 <span class="input-group-text">Description</span>
-                <textarea formControlName="taskDescription" class="form-control" aria-label="description"></textarea>
+                <textarea formControlName="taskDescription" class="form-control" aria-label="description"
+                  rows="3"></textarea>
               </div>
 
-              <div class="accordion" id="accordionExample">
+              <div class="mb-3 accordion" id="accordionExample">
                 <div class="accordion-item">
                   <h2 class="accordion-header" id="headingTwo">
                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
@@ -27,23 +29,29 @@
                   <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
                     data-bs-parent="#accordionExample">
                     <div class="accordion-body">
-                      <div class="mb-3 form-check">
-                        <input formControlName="taskOrganizations" type="checkbox" class="form-check-input"
-                          id="exampleCheck1">
-                        <label class="form-check-label" for="exampleCheck1">Check me out</label>
-                      </div>
+                      <form [formGroup]="organizationsForm">
+                        <div class="mb-3 form-check"
+                          *ngFor="let organization of organizationsList$ | async; let i = index">
+                          <input type="checkbox" class="form-check-input" id="exampleCheck" [value]="organization._id"
+                            formArrayName="selectedOrganizations" (change)="onCheckboxChange($event)">
+                          <label class="form-check-label" for="exampleCheck">{{organization.longName}}</label>
+                        </div>
+                      </form>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div class="my-2">
-                <label for="startDate">startDate</label>
+              <div class="input-group mb-3">
+                <span
+                  class="input-group-text">startDate&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <!-- <label for="startDate">startDate</label> -->
                 <input formControlName="taskStartDate" id="startDate" class="form-control" type="date" />
               </div>
 
-              <div class="my-2">
-                <label for="planFinishDate">planFinishDate</label>
+              <div class="input-group mb-3">
+                <span class="input-group-text">planFinishDate</span>
+                <!-- <label for="planFinishDate">planFinishDate</label> -->
                 <input formControlName="taskPlanFinishDate" id="planFinishDate" class="form-control" type="date" />
               </div>
 
@@ -52,7 +60,6 @@
         </ng-container>
       </form>
 
-
       <form class="container p-0 h-100" [formGroup]="stepForm">
         <button class="btn btn-outline-primary mb-3" (click)="addStepFormGroup()">Add Step</button>
         <ng-container formArrayName="steps">
@@ -60,12 +67,10 @@
             <ng-container [formGroupName]="i">
 
               <div class="col-12 d-flex justify-content-between mb-1">
-
                 <div class="col-6">Step #{{i + 1}}</div>
                 <div class="col-2">
                   <button class="btn btn-danger btn-sm" (click)="removeOrClearStep(i)">Delete</button>
                 </div>
-
               </div>
 
               <div class="input-group mb-3 col-12">
@@ -77,48 +82,12 @@
                 <textarea formControlName="description" class="form-control" placeholder="Step description"></textarea>
               </div>
 
-
-
             </ng-container>
           </div>
-
         </ng-container>
       </form>
+
       <button type="submit" class="btn btn-success mt-3" (click)="save()">Save Task</button>
-
-
-
-      <!-- <div class="add-lessons-form" [formGroup]="form">
-        <ng-container formArrayName="lessons">
-          <ng-container *ngFor="let lessonForm of lessons; let i = index">
-            <div class="lesson-form-row" [formGroup]="lessonForm">
-              <input matInput formControlName="title" placeholder="Lesson title">
-            </div>
-          </ng-container>
-        </ng-container>
-        <button (click)="addLesson()">add</button>
-      </div> -->
-
-
-
-      <!--
-      <button (click)="formArray.push(getFormGroup(null))">Add</button>
-      <div [formGroupName]="formArray">
-        <div *ngFor="let group of formArray.controls; let i = index" [formGroupName]="group">
-          <input formControlName="id" />
-          <input formControlName="name" /><span *ngIf="group.get('name').invalid && group.get('name').touched">*</span>
-          <input formControlName="fromDate" />
-          <input formControlName="fromTime" />
-          <input formControlName="toDate" />
-          <input formControlName="toTime" />
-          <input formControlName="selectedSupervisor2" />
-          <input formControlName="selectedLeave2" />
-          <button (click)="formArray.removeAt(i)">Remove</button>
-        </div>
-      </div>
-      <button (click)="save(formArray)">Save</button> -->
-
-
 
     </div>
   </div>
