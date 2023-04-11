@@ -22,20 +22,40 @@
             </tr>
           </thead>
           <tbody>
-            <tr  *ngFor="let org of task.organizationID; let i = index">
-              <th scope="row">{{i + 1}}</th>
+            <tr *ngFor="let org of task.organizationID; let j = index">
+              <th scope="row">{{j + 1}}</th>
               <td><a href="/tasks/{{task._id}}"><strong>{{org}}</strong></a></td>
-              <td>{{percentageArray[i] === '100%' ? 'Done' : 'In progress...'}}</td>
+              <td>{{percentageArray[i][j] === '100%' ? 'Done' : 'In progress...'}}</td>
               <td>{{task.startDate | date}}</td>
               <td>{{task.planFinishDate | date}}</td>
               <td>{{task.realFinishDate | date}}</td>
               <td>
-                <div class="progress">
-                  <div class="progress-bar" role="progressbar" aria-label="Example with label"
-                    [ngStyle]="{width: percentageArray[i]}" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-                    {{percentageArray[i]}}
+                <ng-container>
+                  <div class="progress"
+                    *ngIf="percentageArray[i][j] !== '0%' && percentageArray[i][j] !== '100%'; else elseHundreedBlock">
+                    <div class="progress-bar" role="progressbar" [ngStyle]="{width: percentageArray[i][j]}"
+                      [attr.aria-valuenow]="percentageArray[i][j]" aria-valuemin="0" aria-valuemax="100">
+                      {{percentageArray[i][j]}}
+                    </div>
                   </div>
-                </div>
+                </ng-container>
+                <ng-template #elseHundreedBlock>
+                  <ng-container *ngIf="percentageArray[i][j] === '100%'; else elseZeroBlock">
+                    <div class="progress" *ngIf="percentageArray[i][j] !== '0%'; else elseHundreedBlock">
+                      <div class="progress-bar bg-success" role="progressbar" [ngStyle]="{width: percentageArray[i][j]}"
+                        [attr.aria-valuenow]="percentageArray[i][j]" aria-valuemin="0" aria-valuemax="100">
+                        {{percentageArray[i][j]}}
+                      </div>
+                    </div>
+                  </ng-container>
+                </ng-template>
+                <ng-template #elseZeroBlock>
+                  <div class="progress">
+                    <div class="progress-bar bg-danger" role="progressbar" style="width: 100%">
+                      0%
+                    </div>
+                  </div>
+                </ng-template>
               </td>
             </tr>
           </tbody>

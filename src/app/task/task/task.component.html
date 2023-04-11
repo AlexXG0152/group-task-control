@@ -64,7 +64,7 @@
   <h3 class="text-center m-2">STEPS</h3>
 
   <div class="accordion accordion-flush" id="accordionFlushExample">
-    <div class="accordion-item" *ngFor="let step of task.steps">
+    <div class="accordion-item" *ngFor="let step of task.performers?.[0]?.steps; let i = index">
       <h2 class="accordion-header" id="flush-headingOne">
         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
           data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne"

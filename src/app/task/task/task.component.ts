@@ -9,13 +9,14 @@ import { TaskService } from 'src/app/services/task.service';
 })
 export class TaskComponent implements OnInit {
   constructor(
-    private taskService: TaskService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private taskService: TaskService
   ) {}
 
   id: string = '';
-  task: any;
+  user?: any;
+  task?: any;
   percentage: string = '';
 
   ngOnInit(): void {
@@ -25,8 +26,13 @@ export class TaskComponent implements OnInit {
 
     this.task = this.taskService.getTask(this.id).subscribe((response) => {
       this.task = response;
-      const done = this.task.steps.reduce((a: any, item: any) => a + (item.done === true ? 1 : 0), 0)
-      this.percentage = `${Math.floor(done / this.task.steps.length * 100)}%`;
+
+      const done = this.task.performers[0].steps.reduce(
+        (a: any, item: any) => a + (item.done === true ? 1 : 0),
+        0
+      );
+
+      this.percentage = `${Math.floor((done / this.task.steps.length) * 100)}%`;
     });
   }
 
@@ -37,6 +43,8 @@ export class TaskComponent implements OnInit {
   onFinishStepClick(id: string, stepNumber: string) {
     const data = {
       stepNumber,
+      name: [this.task.performers[0].steps[Number(stepNumber) - 1].name],
+      desc: [this.task.performers[0].steps[Number(stepNumber) - 1].desc],
       done: true,
       doneAt: new Date().toISOString(),
       comment: 'none',

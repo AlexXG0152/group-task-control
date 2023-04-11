@@ -16,18 +16,22 @@ export class MonitoringComponent implements OnInit {
   ngOnInit(): void {
     this.taskService.getTasks().subscribe((response) => {
       this.tasks = response;
-      console.log(response);
 
-
-      this.tasks.forEach((element: any) => {
-        const taskDone = element.steps.reduce(
-          (a: any, item: any) => a + (item.done === true ? 1 : 0),
-          0
-        );
-        const percentage = `${Math.floor(
-          (taskDone / element.steps.length) * 100
-        )}%`;
-        this.percentageArray.push(percentage);
+      this.tasks.forEach((element: any, i: any) => {
+        element?.performers?.forEach((info: any, j: any) => {
+          const percentage = `${Math.floor(
+            (info.steps.reduce(
+              (a: any, item: any) => a + (item.done === true ? 1 : 0),
+              0
+            ) /
+              info.steps.length) *
+              100
+          )}%`;
+          this.percentageArray[i] = {
+            ...this.percentageArray[i],
+            [j]: percentage,
+          };
+        });
       });
     });
   }

@@ -107,6 +107,9 @@ export class CreateTaskComponent {
         ) {
           this.stepForm.value.steps[key].stepNumber = i;
           this.stepForm.value.steps[key].done = false;
+          this.stepForm.value.steps[key].doneAt = null;
+          this.stepForm.value.steps[key].comment = null;
+          this.stepForm.value.steps[key].finishedUserID = null;
           i++;
         }
       }
