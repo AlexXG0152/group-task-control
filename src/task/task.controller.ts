@@ -8,7 +8,6 @@ import {
   Param,
   Patch,
   Post,
-  Put,
   Req,
   Res,
 } from '@nestjs/common';
@@ -35,11 +34,12 @@ export class TaskController {
   @Get(':id')
   async getTask(
     @Param('id') id: string,
+    @GetCurrentUserId() user: string,
     @Req() req: Request,
     @Res() res: Response,
   ) {
     try {
-      return res.send(await this.taskService.getTask(id));
+      return res.send(await this.taskService.getTask(id, user));
     } catch (error) {
       return res.status(error.status).send(error);
     }
@@ -49,7 +49,7 @@ export class TaskController {
   @HttpCode(HttpStatus.CREATED)
   async createOneTask(
     @GetCurrentUserId() user: string,
-    @Body() task: any,
+    @Body() task: CreateTaskDto,
     @Req() req: Request,
     @Res() res: Response,
   ) {

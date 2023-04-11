@@ -18,7 +18,7 @@ export class User {
   @Prop({ required: true, trim: true })
   password: string;
 
-  @Prop({ required: true, trim: true })
+  @Prop()
   hashedRt: string;
 
   @Prop({ required: true })

@@ -24,11 +24,16 @@ export class UserService {
   ) {}
 
   async getUsers(): Promise<User[]> {
-    const users = await this.userModel.find().exec();
-    users.map((user) => {
-      user.password = '';
-    });
-    return users;
+    try {
+      const users = await this.userModel.find().exec();
+      users.map((user) => {
+        user.password = '';
+      });
+      return users;
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
   }
 
   async getUser(id: string) {
@@ -69,6 +74,7 @@ export class UserService {
 
       return user;
     } catch (error) {
+      console.log(error);
       throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
     }
   }

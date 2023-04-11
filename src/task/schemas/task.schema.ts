@@ -33,7 +33,7 @@ export class Task {
   @Prop()
   realFinishDate: Date;
 
-  @Prop({ required: true })
+  @Prop()
   steps: IStep[];
 
   @Prop()

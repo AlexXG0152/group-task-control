@@ -1,11 +1,11 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsDate, IsNotEmpty, IsString } from 'class-validator';
 import { ITask } from '../interface/task.interface';
 import { Organization } from 'src/organization/schemas/organization.schema';
 import { User } from 'src/user/schemas/user.schema';
 import { IStep } from '../interface/step.interface';
 
 export class CreateTaskDto implements ITask {
-  @IsNotEmpty()
+  // @IsNotEmpty()
   starterID: User;
 
   @IsNotEmpty()
@@ -25,7 +25,7 @@ export class CreateTaskDto implements ITask {
   @IsString()
   planFinishDate?: Date;
 
-  @IsString()
+  // @IsDate()
   realFinishDate?: Date;
 
   steps?: IStep[];
